@@ -49,7 +49,7 @@ Build on this pattern for the rest of the domain: students, enrolments, assignme
 
 The guides for this project live in their own repository:
 
-**https://github.com/<your-org>/tak24-spring-guides**
+**[SB-M8-guide](https://github.com/kuressaareametikool/SB-M8-guide)**
 
 Start with `00-getting-started.md`.
 
