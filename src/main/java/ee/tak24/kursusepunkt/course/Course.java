@@ -22,8 +22,8 @@ public class Course {
   @Column(name = "grading_key", nullable = false, length = 40)
   private String gradingKey;
 
-  @Column(nullable = false)
-  private int credits;
+    @Column(nullable = false)
+private int credits;
 
   @Version private long version;
 
