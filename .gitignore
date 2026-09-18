@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
@@ -11,3 +12,9 @@ target/
 .env
 .DS_Store
 Thumbs.db
+=======
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+>>>>>>> 4b8900f3a522e6edfb0a5990359a0eb4d0f3eda0
