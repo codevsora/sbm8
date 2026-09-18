@@ -24,9 +24,9 @@ public class CourseController {
 
   private final CourseService courseService;
 
-  CourseController(CourseService courseService) {
-    this.courseService = courseService;
-  }
+CourseController(CourseService courseService) {
+this.courseService = courseService;
+}
 
   @Operation(summary = "List courses")
   @GetMapping
@@ -34,8 +34,8 @@ public class CourseController {
     return courseService.findAll(pageable);
   }
 
-  @Operation(summary = "Fetch one course")
-  @GetMapping("/{id}")
+      @Operation(summary = "Fetch one course")
+          @GetMapping("/{id}")
   public CourseResponse get(@PathVariable Long id) {
     return courseService.findById(id);
   }
