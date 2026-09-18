@@ -34,7 +34,11 @@ FROM eclipse-temurin:26-jre AS runtime
 
 # Never run as root. UID 1001 is arbitrary but fixed, so volume permissions
 # stay predictable across rebuilds.
-RUN groupadd --system --gid 1001 spring \
+# curl is needed for the container healthcheck; the JRE image has none.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends curl \
+ && rm -rf /var/lib/apt/lists/* \
+ && groupadd --system --gid 1001 spring \
  && useradd  --system --uid 1001 --gid spring --create-home spring
 
 WORKDIR /app
@@ -55,8 +59,8 @@ ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+ExitOnOutOfMemoryError -Djav
 ENV SPRING_PROFILES_ACTIVE=docker
 
 HEALTHCHECK --interval=15s --timeout=3s --start-period=40s --retries=5 \
-  CMD ["java", "-version"]
-# A real HTTP healthcheck is defined in compose.yaml, where curl is available
-# via the actuator endpoint; the JRE image deliberately has no curl or wget.
+  CMD curl -fs http://localhost:8080/actuator/health | grep -q UP
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# --launcher extracts an exploded application, not a jar, so it starts through
+# JarLauncher rather than "java -jar".
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]

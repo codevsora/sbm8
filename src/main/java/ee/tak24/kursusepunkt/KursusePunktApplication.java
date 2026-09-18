@@ -13,7 +13,8 @@ public class KursusePunktApplication {
   }
 
   /**
-   * Injected wherever the current time is needed, so tests can substitute a fixed clock. See guide 07.
+   * Injected wherever the current time is needed, so tests can substitute a fixed clock. See guide
+   * 07.
    */
   @Bean
   Clock clock() {

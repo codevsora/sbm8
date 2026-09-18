@@ -17,8 +17,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(CourseNotFoundException.class)
   ProblemDetail notFound(CourseNotFoundException e) {
-    ProblemDetail problem =
-        ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
     problem.setTitle("Course not found");
     return problem;
   }
@@ -38,7 +37,10 @@ public class GlobalExceptionHandler {
         "errors",
         e.getBindingResult().getFieldErrors().stream()
             .collect(
-                toMap(FieldError::getField, FieldError::getDefaultMessage, (first, second) -> first)));
+                toMap(
+                    FieldError::getField,
+                    FieldError::getDefaultMessage,
+                    (first, second) -> first)));
     return problem;
   }
 }
