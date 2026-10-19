@@ -1,6 +1,6 @@
 # Code standard
 
-Agreed: <date>. Changes require a group decision.
+Agreed: <18. Sep>. Changes require a group decision.
 
 ## Formatting
 - Google Java Format, enforced by Spotless. `make mvn ARGS=spotless:apply` before every commit.

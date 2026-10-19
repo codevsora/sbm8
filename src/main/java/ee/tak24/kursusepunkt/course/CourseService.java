@@ -2,53 +2,56 @@ package ee.tak24.kursusepunkt.course;
 
 import ee.tak24.kursusepunkt.course.dto.CourseResponse;
 import ee.tak24.kursusepunkt.course.dto.CreateCourseRequest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import ee.tak24.kursusepunkt.course.dto.UpdateCourseRequest;
+import java.util.List;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+/** Business logic for courses. */
 @Service
-@Transactional
 public class CourseService {
 
-  private final CourseRepository repository;
+  private final CourseRepository courseRepository;
+  private final CourseMapper courseMapper;
 
-  CourseService(CourseRepository repository) {
-    this.repository = repository;
+  public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
+    this.courseRepository = courseRepository;
+    this.courseMapper = courseMapper;
   }
 
-  @Transactional(readOnly = true)
-  public Page<CourseResponse> findAll(Pageable pageable) {
-    return repository.findAll(pageable).map(CourseResponse::from);
+  public List<CourseResponse> findAll() {
+    return courseRepository.findAll().stream().map(courseMapper::toResponse).toList();
   }
 
-  @Transactional(readOnly = true)
   public CourseResponse findById(Long id) {
-    return repository
-        .findById(id)
-        .map(CourseResponse::from)
-        .orElseThrow(() -> new CourseNotFoundException(id));
+    return courseMapper.toResponse(getOrThrow(id));
   }
 
-  /**
-   * Creates a course.
-   *
-   * @param request validated input
-   * @return the created course
-   * @throws DuplicateCourseException if a course with the same name already exists
-   */
   public CourseResponse create(CreateCourseRequest request) {
-    if (repository.existsByNameIgnoreCase(request.name())) {
+    if (courseRepository.existsByNameIgnoreCase(request.name())) {
       throw new DuplicateCourseException(request.name());
     }
-    Course course = new Course(request.name(), request.gradingKey(), request.credits());
-    return CourseResponse.from(repository.save(course));
+    Course course = courseMapper.toEntity(request);
+    return courseMapper.toResponse(courseRepository.save(course));
+  }
+
+  public CourseResponse update(Long id, UpdateCourseRequest request) {
+    Course course = getOrThrow(id);
+    boolean nameChanged = !course.getName().equalsIgnoreCase(request.name());
+    if (nameChanged && courseRepository.existsByNameIgnoreCase(request.name())) {
+      throw new DuplicateCourseException(request.name());
+    }
+    courseMapper.applyUpdate(course, request);
+    return courseMapper.toResponse(courseRepository.save(course));
   }
 
   public void delete(Long id) {
-    if (!repository.existsById(id)) {
+    if (!courseRepository.existsById(id)) {
       throw new CourseNotFoundException(id);
     }
-    repository.deleteById(id);
+    courseRepository.deleteById(id);
+  }
+
+  private Course getOrThrow(Long id) {
+    return courseRepository.findById(id).orElseThrow(() -> new CourseNotFoundException(id));
   }
 }
